@@ -62,8 +62,6 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<AbstractG
             }
         };
     }
-
-
     public static class Config {
         // You can leave this empty
     }
