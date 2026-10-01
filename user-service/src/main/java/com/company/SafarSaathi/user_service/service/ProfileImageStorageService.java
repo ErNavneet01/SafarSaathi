@@ -2,6 +2,7 @@ package com.company.SafarSaathi.user_service.service;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -10,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 @Service
+@RequiredArgsConstructor
 public class ProfileImageStorageService {
 
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
@@ -21,10 +23,6 @@ public class ProfileImageStorageService {
     );
 
     private final Cloudinary cloudinary;
-
-    public ProfileImageStorageService(Cloudinary cloudinary) {
-        this.cloudinary = cloudinary;
-    }
 
     public String uploadProfileImage(MultipartFile file) throws IOException {
 
