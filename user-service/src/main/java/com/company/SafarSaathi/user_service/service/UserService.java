@@ -1,3 +1,4 @@
+
 package com.company.SafarSaathi.user_service.service;
 
 import com.company.SafarSaathi.user_service.auth.UserContextHolder;
@@ -8,9 +9,11 @@ import com.company.SafarSaathi.user_service.exceptions.ResourceNotFoundException
 import com.company.SafarSaathi.user_service.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
@@ -19,13 +22,17 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
+    private final ProfileImageStorageService profileImageStorageService;
 
     public UserProfileResponse getCurrentUserProfile() {
         Long userId = UserContextHolder.getCurrentUserId();
         log.info("Fetching current user with ID: {}", userId);
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "User not found with ID: " + userId
+                ));
+
         return modelMapper.map(user, UserProfileResponse.class);
     }
 
@@ -33,7 +40,9 @@ public class UserService {
         log.info("Fetching user by ID: {}", userId);
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "User not found with ID: " + userId
+                ));
 
         return modelMapper.map(user, UserProfileResponse.class);
     }
@@ -43,9 +52,10 @@ public class UserService {
         log.info("Updating user with ID: {}", userId);
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "User not found with ID: " + userId
+                ));
 
-        // Update fields
         user.setFullName(request.getFullName());
         user.setPhoneNumber(request.getPhoneNumber());
         user.setGender(request.getGender());
@@ -60,6 +70,28 @@ public class UserService {
         user.setProfileImageUrl(request.getProfileImageUrl());
 
         User updatedUser = userRepository.save(user);
+
+        return modelMapper.map(updatedUser, UserProfileResponse.class);
+    }
+
+    public UserProfileResponse uploadProfileImage(MultipartFile file)
+            throws IOException {
+
+        Long userId = UserContextHolder.getCurrentUserId();
+        log.info("Uploading profile image for user ID: {}", userId);
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "User not found with ID: " + userId
+                ));
+
+        String imageUrl =
+                profileImageStorageService.uploadProfileImage(file);
+
+        user.setProfileImageUrl(imageUrl);
+
+        User updatedUser = userRepository.save(user);
+
         return modelMapper.map(updatedUser, UserProfileResponse.class);
     }
 }

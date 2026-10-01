@@ -1,3 +1,4 @@
+
 package com.company.SafarSaathi.user_service.controller;
 
 import com.company.SafarSaathi.user_service.dtos.request.UpdateUserProfileRequest;
@@ -7,8 +8,12 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/users")
@@ -43,10 +48,25 @@ public class UserController {
             @Positive(message = "User ID must be positive")
             @PathVariable Long userId
     ) {
-
         log.info("Fetching profile for userId={}", userId);
+
         return ResponseEntity.ok(
                 userService.getUserById(userId)
+        );
+    }
+
+    @PostMapping(
+            value = "/profile/photo",
+            consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+    )
+    public ResponseEntity<UserProfileResponse> uploadProfilePhoto(
+            @RequestParam("file") MultipartFile file
+    ) throws IOException {
+
+        log.info("Uploading current user's profile photo");
+
+        return ResponseEntity.ok(
+                userService.uploadProfileImage(file)
         );
     }
 }
