@@ -18,13 +18,18 @@ spring:
       globalcors:
         corsConfigurations:
           '[/**]':
-            allowedOrigins: "*"
+            allowedOrigins:
+              - "http://localhost:3000"
             allowedMethods:
               - GET
               - POST
               - PUT
               - DELETE
               - OPTIONS
+            allowedHeaders:
+              - "*"
+            allowCredentials: false
+            maxAge: 3600
       routes:
         - id: auth-service
           uri: lb://auth-service

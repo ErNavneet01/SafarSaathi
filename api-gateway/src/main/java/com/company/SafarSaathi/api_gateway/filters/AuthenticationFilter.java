@@ -28,7 +28,7 @@ public class AuthenticationFilter extends AbstractGatewayFilterFactory<AbstractG
         return (exchange, chain) -> {
             String path = exchange.getRequest().getURI().getPath();
 
-            // ✅ Only skip exact public endpoints
+            // Only skip exact public endpoints
             if (path.equals("/auth/login") || path.equals("/auth/signup")) {
                 log.info("Public path, skipping authentication: {}", path);
                 return chain.filter(exchange);
