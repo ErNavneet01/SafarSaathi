@@ -46,7 +46,6 @@ public class TripService {
 
         validateTripCreation(request);
 
-
         Long userId = UserContextHolder.getCurrentUserId();
 
         Trip trip = modelMapper.map(request, Trip.class);
